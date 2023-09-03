@@ -19,7 +19,7 @@ $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDEPATHS) -o $@ $^ $(LDPATH) $(LDFLAGS)  
 
 %.o: %.cc
-	$(CC) $(CFLAGS) $(INCLUDEPATHS) -c $< -o $@ $(LDPATH) $(LDFLAGS)  
+	$(CC) $(CFLAGS) $(INCLUDEPATHS) -c $< -o $@   
 
 clean : 
 	rm -f $(OBJS) $(EXEC)
