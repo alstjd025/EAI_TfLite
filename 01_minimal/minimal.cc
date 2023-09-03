@@ -13,6 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 #include <cstdio>
+#include <vector>
+#include <iostream>
+#include <fstream>
 #include "tensorflow/lite/interpreter.h"
 #include "tensorflow/lite/kernels/register.h"
 #include "tensorflow/lite/model.h"
@@ -28,11 +31,74 @@ limitations under the License.
 //
 // Usage: minimal <tflite model>
 
+using namespace std;
+
+#define MNIST_INPUT "/home/pi/TfLite_sample/01_minimal/mnist_images"
+#define MNIST_LABEL "/home/pi/TfLite_sample/01_minimal/mnist_labes"
+
 #define TFLITE_MINIMAL_CHECK(x)                              \
   if (!(x)) {                                                \
     fprintf(stderr, "Error at %s:%d\n", __FILE__, __LINE__); \
     exit(1);                                                 \
   }
+
+int ReverseInt(int i)
+{
+	unsigned char ch1, ch2, ch3, ch4;
+	ch1 = i & 255;
+	ch2 = (i >> 8) & 255;
+	ch3 = (i >> 16) & 255;
+	ch4 = (i >> 24) & 255;
+	return((int)ch1 << 24) + ((int)ch2 << 16) + ((int)ch3 << 8) + ch4;
+}
+
+void read_Mnist(string filename, vector<vector<float>>& input_vec) {
+	ifstream file(filename, ios::binary);
+	if (file.is_open()){
+		int magic_number = 0;
+		int number_of_images = 0;
+		int n_rows = 0;
+		int n_cols = 0;
+		file.read((char*)& magic_number, sizeof(magic_number));
+		magic_number = ReverseInt(magic_number);
+		file.read((char*)& number_of_images, sizeof(number_of_images));
+		number_of_images = ReverseInt(number_of_images);
+        file.read((char*)& n_rows, sizeof(n_rows));
+		n_rows = ReverseInt(n_rows);
+		file.read((char*)& n_cols, sizeof(n_cols));
+		n_cols = ReverseInt(n_cols);
+		for (int i = 0; i < 1; ++i){
+			for (int r = 0; r < n_rows; ++r){
+        input_vec.push_back(vector<float>());
+				for (int c = 0; c < n_cols; ++c){
+					unsigned char temp = 0;
+					file.read((char*)& temp, sizeof(temp));
+					input_vec[r].push_back((float)temp);
+				}
+        std::cout << "\n";
+			}
+		}
+	}
+	else {
+		cout << "file open failed" << endl;
+	}
+}
+
+void read_Mnist_Label(string filename, vector<unsigned char> &arr) {
+	ifstream file(filename, ios::binary);
+	if (file.is_open()) {
+		for (int i = 0; i < 1; ++i) {
+			unsigned char temp = 0;
+			file.read((char*)&temp, sizeof(temp));
+			if (i > 7) {
+				arr.push_back((unsigned char)temp);
+			}
+		}
+	}
+	else {
+        cout << "file open failed" << endl;
+    }
+}
 
 int main(int argc, char* argv[]) {
   if (argc != 2) {
@@ -40,6 +106,10 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   const char* filename = argv[1];
+
+  // Load mnist input images
+  vector<vector<float>> input_vector;
+  read_Mnist(MNIST_INPUT, input_vector);
 
   // Load model
   std::unique_ptr<tflite::FlatBufferModel> model =
@@ -65,6 +135,11 @@ int main(int argc, char* argv[]) {
   // TODO(user): Insert code to fill input tensors.
   // Note: The buffer of the input tensor with index `i` of type T can
   // be accessed with `T* input = interpreter->typed_input_tensor<T>(i);`
+  auto input_tensor = interpreter->typed_input_tensor<float>(0);
+  for(int i=0; i<28; ++i) // image rows
+    for(int j=0; j<28; ++j) // image cols
+      input_tensor[i * 28 + j] = input_vector[i][j] / 255.0; // normalize and copy input values.
+  
 
   // Run inference
   TFLITE_MINIMAL_CHECK(interpreter->Invoke() == kTfLiteOk);
@@ -75,6 +150,10 @@ int main(int argc, char* argv[]) {
   // TODO(user): Insert getting data out code.
   // Note: The buffer of the output tensor with index `i` of type T can
   // be accessed with `T* output = interpreter->typed_output_tensor<T>(i);`
+  auto output_tensor = interpreter->typed_output_tensor<float>(0);
+  for(int i=0; i<10; ++i)
+    printf("label : %d %.3f% \n", i, output_tensor[i] * 100);
 
+  
   return 0;
 }
