@@ -109,6 +109,13 @@ int main(int argc, char* argv[]) {
   // Load mnist input images
   vector<vector<float>> input_vector;
   read_Mnist(MNIST_INPUT, input_vector);
+  std::cout << "Input MNIST Image" << "\n";
+  for(int i=0; i<28; ++i){
+    for(int j=0; j<28; ++j){
+      printf("%3d ", (int)input_vector[i][j]);
+    }
+    printf("\n");
+  }
 
   // Load model
   std::unique_ptr<tflite::FlatBufferModel> model =
