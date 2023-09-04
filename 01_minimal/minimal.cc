@@ -63,7 +63,7 @@ void read_Mnist(string filename, vector<vector<float>>& input_vec) {
 		magic_number = ReverseInt(magic_number);
 		file.read((char*)& number_of_images, sizeof(number_of_images));
 		number_of_images = ReverseInt(number_of_images);
-        file.read((char*)& n_rows, sizeof(n_rows));
+    file.read((char*)& n_rows, sizeof(n_rows));
 		n_rows = ReverseInt(n_rows);
 		file.read((char*)& n_cols, sizeof(n_cols));
 		n_cols = ReverseInt(n_cols);
@@ -75,7 +75,6 @@ void read_Mnist(string filename, vector<vector<float>>& input_vec) {
 					file.read((char*)& temp, sizeof(temp));
 					input_vec[r].push_back((float)temp);
 				}
-        std::cout << "\n";
 			}
 		}
 	}
