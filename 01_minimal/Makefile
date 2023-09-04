@@ -10,8 +10,6 @@ SRCS := minimal.cc
 OBJS := $(SRCS:.cc=.o)
 EXEC := minimal
 
-.PHONY: all clean
-
 all: $(EXEC)
 
 $(EXEC): $(OBJS)
