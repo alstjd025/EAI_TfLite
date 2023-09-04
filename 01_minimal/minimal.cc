@@ -33,8 +33,8 @@ limitations under the License.
 
 using namespace std;
 
-#define MNIST_INPUT "/home/pi/TfLite_sample/01_minimal/mnist_images"
-#define MNIST_LABEL "/home/pi/TfLite_sample/01_minimal/mnist_labes"
+#define MNIST_INPUT "/home/pi/EAI_TfLite/01_minimal/mnist_images"
+#define MNIST_LABEL "/home/pi/EAI_TfLite/01_minimal/mnist_labels"
 
 #define TFLITE_MINIMAL_CHECK(x)                              \
   if (!(x)) {                                                \

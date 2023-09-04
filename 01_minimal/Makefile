@@ -1,10 +1,10 @@
 CC := g++
 CFLAGS := -std=c++11 -I/usr/include
-INCLUDEPATHS := -I/home/pi/tensorflow\
-	        -I/home/pi/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/build
+INCLUDEPATHS := -I${HOME}/tensorflow\
+	        -I${HOME}/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/build
 LDFLAGS := -pthread -ltensorflow-lite -lflatbuffers -ldl
-LDPATH := -L/home/pi/tensorflow/tensorflow/lite/tools/make/gen/bbb_armv7l/lib\
-	  -L/home/pi/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/build
+LDPATH := -L${HOME}/tensorflow/tensorflow/lite/tools/make/gen/bbb_armv7l/lib\
+	  -L${HOME}/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/build
 
 SRCS := minimal.cc
 OBJS := $(SRCS:.cc=.o)
